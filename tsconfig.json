@@ -1,0 +1,19 @@
+{
+	"extends": "./.svelte-kit/tsconfig.json",
+	"compilerOptions": {
+		"paths": {
+			"$shared": [
+				"./shared"
+			],
+			"$shared/*": [
+				"./shared/*"
+			],
+			"$lib": [
+				"client/lib"
+			],
+			"$lib/*": [
+				"client/lib/*"
+			]
+		}
+	}
+}
