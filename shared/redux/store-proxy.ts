@@ -14,9 +14,7 @@ export function createStoreProxy<T extends QueryStore<any>>(
 	// dispatch actions to the remote store
 	return new Proxy(localStore, {
 		get(target, prop) {
-			const isCommand = prop === 'dispatch';
-			const postFunc = createPostFunc(`${host}/command`);
-			return isCommand ? postFunc : target[prop];
+			return prop === 'dispatch' ? createPostFunc(`${host}/command`) : target[prop];
 		}
 	});
 }
