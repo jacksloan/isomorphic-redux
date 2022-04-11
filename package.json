@@ -2,11 +2,12 @@
     "name": "isomorphic-redux",
     "version": "0.0.1",
     "scripts": {
-        "dev": "svelte-kit dev",
+        "start": "run-p start:client start:server",
+        "start:client": "svelte-kit dev",
+        "start:server": "node --experimental-specifier-resolution node --loader ts-node/esm ./server/main.ts",
         "build": "svelte-kit build",
         "package": "svelte-kit package",
         "preview": "svelte-kit preview",
-        "start:server": "node --experimental-specifier-resolution node --loader ts-node/esm ./server/main.ts",
         "prepare": "svelte-kit sync",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -24,6 +25,7 @@
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-svelte3": "^3.2.1",
+        "npm-run-all": "^4.1.5",
         "postcss": "^8.4.5",
         "postcss-load-config": "^3.1.1",
         "prettier": "^2.5.1",
@@ -44,6 +46,7 @@
         "daisyui": "^2.13.6",
         "express": "^4.17.3",
         "rxjs": "^7.5.5",
+        "svelte-feather-icons": "^4.0.0",
         "ts-action": "^11.0.0",
         "uuid": "^8.3.2"
     }
