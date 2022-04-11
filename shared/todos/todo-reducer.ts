@@ -1,5 +1,5 @@
 import { on, reducer } from 'ts-action';
-import { addTodo, deleteTodo } from './todo-actions';
+import * as action from './todo-actions';
 import type { Todo } from './todo-model';
 
 export interface TodoState {
@@ -12,12 +12,16 @@ export const initialState: TodoState = {
 
 export const todoReducer = reducer(
 	initialState,
-	on(addTodo, (state, { payload }) => ({
+	on(action.addTodo, (state, { payload }) => ({
 		...state,
 		todos: [...state.todos, payload]
 	})),
-	on(deleteTodo, (state, { payload }) => ({
+	on(action.deleteTodo, (state, { payload }) => ({
 		...state,
 		todos: [...state.todos.filter((t) => t.id !== payload)]
+	})),
+	on(action.setState, (state, { payload: { todos } }) => ({
+		...state,
+		todos
 	}))
 );

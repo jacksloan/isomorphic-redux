@@ -1,22 +1,26 @@
-import express from 'express';
+import express, { type Response } from 'express';
 import cors from 'cors';
 import { TodoStore } from '../shared';
+import { setState } from '../shared';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const todoStore = new TodoStore({
-	todos: [
-		{
-			title: 'First',
-			description: 'Do something',
-			done: false,
-			id: '12345'
-		}
-	]
-});
+const todoStore = new TodoStore();
+todoStore.dispatch(
+	setState({
+		todos: [
+			{
+				title: 'Chores',
+				description: 'Do the dishes',
+				done: false,
+				id: '12345'
+			}
+		]
+	})
+);
 
 app.post('/command', (req, res) => {
 	todoStore.dispatch(req.body);
@@ -33,19 +37,13 @@ app.get('/stream', (req, res) => {
 
 	res.flushHeaders();
 
-	res.write(
-		JSON.stringify({
-			initial: todoStore.getState()
-		}) + '\n\n'
-	);
+	const writer = newWriter(res);
+
+	const initialState = setState(todoStore.getState());
+	writer.write(initialState);
 
 	const subscription = todoStore.actions$.pipe().subscribe((action) => {
-		console.log(todoStore.getState());
-		res.write(
-			JSON.stringify({
-				action
-			}) + '\n\n'
-		);
+		writer.write(action);
 	});
 
 	res.on('close', () => {
@@ -54,6 +52,14 @@ app.get('/stream', (req, res) => {
 		res.end();
 	});
 });
+
+function newWriter(res: Response) {
+	return {
+		write(data: any) {
+			res.write(`data: ${JSON.stringify(data)}\n\n`);
+		}
+	};
+}
 
 const PORT = 3001;
 

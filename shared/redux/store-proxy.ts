@@ -1,13 +1,13 @@
 import type { QueryStore } from './query-store';
 
-export function createStoreProxy<T>(
-	store: QueryStore<T>,
-	host = 'http://localhost:3001'
-): QueryStore<T> {
-	// TODO EventSource is not working
-	const es = new EventSource(`http://localhost:3001/stream`);
-	es.onmessage = console.log;
-	es.onopen = () => console.log('Event: open');
+export function createStoreProxy<J extends QueryStore<any>>(
+	store: J,
+	host: `http://${string}:${number}` = 'http://localhost:3001'
+): J {
+	// parse streaming response to actions and dispatch
+	const es = new EventSource(`${host}/stream`);
+	es.onmessage = (ev) => store.dispatch(JSON.parse(ev.data));
+	es.onerror = (e) => console.error('EventSource: error', e);
 
 	return new Proxy(store, {
 		get(target, prop) {
@@ -23,10 +23,14 @@ export function createStoreProxy<T>(
 					});
 				};
 			} else {
-				return function () {
-					// eslint-disable-next-line prefer-rest-params
-					return target[prop](...arguments);
-				};
+				const val = target[prop];
+				const callable = typeof val === 'function';
+				return !callable
+					? val
+					: function () {
+							// eslint-disable-next-line prefer-rest-params
+							return val(...arguments);
+					  };
 			}
 		}
 	});

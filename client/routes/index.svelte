@@ -1,17 +1,42 @@
 <script lang="ts">
-	import { TodoStore, createStoreProxy, addTodo } from '$shared';
+	import { TodoStoreFactory, type Todo, type TodoStoreFacade } from '$shared';
+	import type { Observable } from 'rxjs';
 	import { onMount } from 'svelte';
-	import { v4 as uuid } from 'uuid';
 
-	let dispatch = () => {};
+	let facade: TodoStoreFacade;
+	let description: string;
+	let title: string;
+	let todos: Observable<Todo[]>;
 
 	onMount(() => {
-		const store = createStoreProxy(new TodoStore({ todos: [] }));
-
-		dispatch = function () {
-			store.dispatch(addTodo({ description: '123', title: 'First', done: false, id: uuid() }));
-		};
+		facade = TodoStoreFactory.new({ type: 'remote', host: 'http://localhost:3001' }).facade();
+		todos = facade.todos;
 	});
 </script>
 
-<button on:click={dispatch}> Dispatch Action </button>
+<label for="title" />
+<input id="title" type="text" bind:value={title} />
+
+<label for="description" />
+<input id="description" type="textarea" bind:value={description} />
+
+<button on:click={() => facade.createTodo(title, description)}>ADD TODO</button>
+
+<table>
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Description</th>
+			<th>Complete</th>
+		</tr>
+	</thead>
+	<tbody>
+		{#each $todos || [] as todo}
+			<tr>
+				<td>{todo.title}</td>
+				<td>{todo.description}</td>
+				<td>{todo.done}</td>
+			</tr>
+		{/each}
+	</tbody>
+</table>
