@@ -5,20 +5,19 @@ import type { Todo } from './todo-model.js';
 import { type TodoState, todoReducer } from './todo-reducer';
 import { addTodo, deleteTodo } from './todo-actions';
 
-export class TodoStore {
-	store: QueryStore<TodoState>;
+export class TodoStore extends QueryStore<TodoState> {
 	todos: Observable<Todo[]>;
 
 	constructor(initialState: TodoState) {
-		this.store = new QueryStore(initialState, todoReducer);
-		this.todos = this.store.select((s) => s.todos);
+		super(initialState, todoReducer);
+		this.todos = this.select((s) => s.todos);
 	}
 
 	createTodo(title: string, description: string) {
-		this.store.dispatch(addTodo({ description, title, id: uuid(), done: false }));
+		this.dispatch(addTodo({ description, title, id: uuid(), done: false }));
 	}
 
 	deleteTodo = (id: string) => {
-		this.store.dispatch(deleteTodo(id));
-	}
+		this.dispatch(deleteTodo(id));
+	};
 }

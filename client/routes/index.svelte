@@ -1,11 +1,17 @@
 <script lang="ts">
+	import { TodoStore, createStoreProxy, addTodo } from '$shared';
 	import { onMount } from 'svelte';
-	import { TodoStore } from '$shared';
+	import { v4 as uuid } from 'uuid';
+
+	let dispatch = () => {};
 
 	onMount(() => {
-		console.log(new TodoStore({ todos: [] }));
+		const store = createStoreProxy(new TodoStore({ todos: [] }));
+
+		dispatch = function () {
+			store.dispatch(addTodo({ description: '123', title: 'First', done: false, id: uuid() }));
+		};
 	});
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<button on:click={dispatch}> Dispatch Action </button>
