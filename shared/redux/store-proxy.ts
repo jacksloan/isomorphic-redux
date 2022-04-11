@@ -1,36 +1,34 @@
+import type { Action } from 'ts-action';
 import type { QueryStore } from './query-store';
 
-export function createStoreProxy<J extends QueryStore<any>>(
-	store: J,
+export function createStoreProxy<T extends QueryStore<any>>(
+	localStore: T,
 	host: `http://${string}:${number}` = 'http://localhost:3001'
-): J {
-	// parse streaming response to actions and dispatch
+): T {
+	// receive incoming actions and dispatch them to the in memory store
 	const es = new EventSource(`${host}/stream`);
-	es.onmessage = (ev) => store.dispatch(JSON.parse(ev.data));
+	es.onmessage = (ev) => localStore.dispatch(JSON.parse(ev.data));
 	es.onerror = (e) => console.error('EventSource: error', e);
 
-	return new Proxy(store, {
+	// intercept calls to "dispatch"
+	// dispatch actions to the remote store
+	return new Proxy(localStore, {
 		get(target, prop) {
-			if (prop === 'dispatch') {
-				return function () {
-					fetch(`${host}/command`, {
-						method: 'post',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						// eslint-disable-next-line prefer-rest-params
-						body: JSON.stringify(arguments[0])
-					});
-				};
-			} else {
-				const callable = typeof target[prop] === 'function';
-				return !callable
-					? target[prop]
-					: function () {
-							// eslint-disable-next-line prefer-rest-params
-							return target[prop](...arguments);
-					  };
-			}
+			const isCommand = prop === 'dispatch';
+			const postFunc = createPostFunc(`${host}/command`);
+			return isCommand ? postFunc : target[prop];
 		}
 	});
+}
+
+function createPostFunc(url: string) {
+	return (action: Action) =>
+		fetch(url, {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			// eslint-disable-next-line prefer-rest-params
+			body: JSON.stringify(action)
+		});
 }
