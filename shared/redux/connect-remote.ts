@@ -1,7 +1,7 @@
 import type { Action } from 'ts-action';
 import type { QueryStore } from './query-store';
 
-export function createStoreProxy<T extends QueryStore<any>>(
+export function connectRemoteStore<T extends QueryStore<any>>(
 	localStore: T,
 	host: `http://${string}:${number}` = 'http://localhost:3001'
 ): T {

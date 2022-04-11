@@ -1,4 +1,4 @@
-import { createStoreProxy } from '../redux';
+import { connectRemoteStore } from '../redux';
 import { TodoStore } from './todo-store';
 import { TodoStoreFacade } from './todo-store-facade';
 
@@ -21,7 +21,7 @@ export class TodoStoreFactory {
 			case 'local':
 				return new TodoStoreFactory(new TodoStore());
 			case 'remote':
-				return new TodoStoreFactory(createStoreProxy(new TodoStore(), config.host));
+				return new TodoStoreFactory(connectRemoteStore(new TodoStore(), config.host));
 			default:
 				throw new Error('invalid config type');
 		}
