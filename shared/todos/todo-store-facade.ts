@@ -5,19 +5,19 @@ import { v4 as uuid } from 'uuid';
 
 // TodoStoreFacade wraps a TodoStore with simplified functionality
 export class TodoStoreFacade {
-	constructor(private store: TodoStore) {}
+    constructor(private store: TodoStore) {}
 
-	todos = this.store.select((s) => s.todos);
+    todos = this.store.select((s) => s.todos);
 
-	resetState(s: TodoState) {
-		this.store.dispatch(setState(s));
-	}
+    resetState(s: TodoState) {
+        this.store.dispatch(setState(s));
+    }
 
-	createTodo(title: string, description: string) {
-		this.store.dispatch(addTodo({ description, title, id: uuid(), done: false }));
-	}
+    createTodo(title: string, description: string) {
+        this.store.dispatch(addTodo({ description, title, id: uuid(), done: false }));
+    }
 
-	deleteTodo = (id: string) => {
-		this.store.dispatch(deleteTodo(id));
-	};
+    deleteTodo = (id: string) => {
+        this.store.dispatch(deleteTodo(id));
+    };
 }

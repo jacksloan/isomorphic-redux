@@ -1,20 +1,12 @@
 {
-	"extends": "./.svelte-kit/tsconfig.json",
-	"compilerOptions": {
-		"esModuleInterop": true,
-		"paths": {
-			"$shared": [
-				"./shared"
-			],
-			"$shared/*": [
-				"./shared/*"
-			],
-			"$lib": [
-				"client/lib"
-			],
-			"$lib/*": [
-				"client/lib/*"
-			]
-		}
-	}
+    "extends": "./.svelte-kit/tsconfig.json",
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "paths": {
+            "$shared": ["./shared"],
+            "$shared/*": ["./shared/*"],
+            "$lib": ["client/lib"],
+            "$lib/*": ["client/lib/*"]
+        }
+    }
 }

@@ -1,11 +1,11 @@
 const config = {
-	content: ['./client/**/*.{html,js,svelte,ts}'],
+    content: ['./client/**/*.{html,js,svelte,ts}'],
 
-	theme: {
-		extend: {}
-	},
+    theme: {
+        extend: {}
+    },
 
-	plugins: [require('daisyui')]
+    plugins: [require('daisyui')]
 };
 
 module.exports = config;
