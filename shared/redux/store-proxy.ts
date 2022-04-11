@@ -23,13 +23,12 @@ export function createStoreProxy<J extends QueryStore<any>>(
 					});
 				};
 			} else {
-				const val = target[prop];
-				const callable = typeof val === 'function';
+				const callable = typeof target[prop] === 'function';
 				return !callable
-					? val
+					? target[prop]
 					: function () {
 							// eslint-disable-next-line prefer-rest-params
-							return val(...arguments);
+							return target[prop](...arguments);
 					  };
 			}
 		}
